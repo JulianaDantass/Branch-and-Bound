@@ -1,0 +1,15 @@
+instances/a280.tsp --- Optimal!
+instances/gil262.tsp --- Good
+instances/gr202.tsp --- Good
+instances/gr229.tsp --- Good
+instances/pr226.tsp --- Optimal!
+instances/pr264.tsp --- Optimal!
+instances/pr299.tsp --- Optimal!
+instances/ts225.tsp --- Optimal!
+instances/tsp225.tsp --- Optimal!
+
+TOTAL COUNT
+Optimal: 6
+Good: 3
+Needs improvement: 0
+Not found: 0

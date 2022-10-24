@@ -1,0 +1,55 @@
+instances/att48.tsp --- Optimal!
+instances/bayg29.tsp --- Optimal!
+instances/bays29.tsp --- Optimal!
+instances/berlin52.tsp --- Optimal!
+instances/bier127.tsp --- Optimal!
+instances/brazil58.tsp --- Optimal!
+instances/brg180.tsp --- Optimal!
+instances/burma14.tsp --- Optimal!
+instances/ch130.tsp --- Optimal!
+instances/ch150.tsp --- Good
+instances/d198.tsp --- Optimal!
+instances/dantzig42.tsp --- Optimal!
+instances/eil101.tsp --- Not found
+instances/eil51.tsp --- Optimal!
+instances/eil76.tsp --- Optimal!
+instances/fri26.tsp --- Optimal!
+instances/gr120.tsp --- Optimal!
+instances/gr137.tsp --- Optimal!
+instances/gr17.tsp --- Optimal!
+instances/gr21.tsp --- Optimal!
+instances/gr24.tsp --- Optimal!
+instances/gr48.tsp --- Optimal!
+instances/gr96.tsp --- Optimal!
+instances/hk48.tsp --- Optimal!
+instances/kroA100.tsp --- Optimal!
+instances/kroA150.tsp --- Good
+instances/kroA200.tsp --- Optimal!
+instances/kroB100.tsp --- Optimal!
+instances/kroB150.tsp --- Optimal!
+instances/kroB200.tsp --- Optimal!
+instances/kroC100.tsp --- Optimal!
+instances/kroD100.tsp --- Optimal!
+instances/kroE100.tsp --- Optimal!
+instances/lin105.tsp --- Optimal!
+instances/pr107.tsp --- Optimal!
+instances/pr124.tsp --- Optimal!
+instances/pr136.tsp --- Optimal!
+instances/pr144.tsp --- Optimal!
+instances/pr152.tsp --- Optimal!
+instances/pr76.tsp --- Optimal!
+instances/rat195.tsp --- Good
+instances/rat99.tsp --- Optimal!
+instances/rd100.tsp --- Optimal!
+instances/si175.tsp --- Optimal!
+instances/st70.tsp --- Optimal!
+instances/swiss42.tsp --- Optimal!
+instances/u159.tsp --- Optimal!
+instances/ulysses16.tsp --- Optimal!
+instances/ulysses22.tsp --- Optimal!
+
+TOTAL COUNT
+Optimal: 45
+Good: 3
+Needs improvement: 0
+Not found: 1

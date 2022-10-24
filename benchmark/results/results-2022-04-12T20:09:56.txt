@@ -1,0 +1,242 @@
+instances/att48.tsp
+Avg cost: 10628.0
+Avg time: 0.21587829999999997
+Off percentage: 0.0%
+
+instances/bayg29.tsp
+Avg cost: 1610.0
+Avg time: 0.0380397
+Off percentage: 0.0%
+
+instances/bays29.tsp
+Avg cost: 2020.0
+Avg time: 0.036651600000000006
+Off percentage: 0.0%
+
+instances/berlin52.tsp
+Avg cost: 7542.0
+Avg time: 0.2712179
+Off percentage: 0.0%
+
+instances/bier127.tsp
+Avg cost: 118282.0
+Avg time: 6.755242
+Off percentage: 0.0%
+
+instances/brazil58.tsp
+Avg cost: 25395.0
+Avg time: 0.3795998
+Off percentage: 0.0%
+
+instances/brg180.tsp
+Avg cost: 1950.0
+Avg time: 18.82787
+Off percentage: 0.0%
+
+instances/burma14.tsp
+Avg cost: 3323.0
+Avg time: 0.0038866000000000005
+Off percentage: 0.0%
+
+instances/ch130.tsp
+Avg cost: 6110.0
+Avg time: 7.138599000000001
+Off percentage: 0.0%
+
+instances/ch150.tsp
+Avg cost: 6528.5
+Avg time: 10.75
+Off percentage: 0.007659313725490196%
+
+instances/d198.tsp
+Avg cost: 15780.0
+Avg time: 50.19488
+Off percentage: 0.0%
+
+instances/dantzig42.tsp
+Avg cost: 699.0
+Avg time: 0.12645279999999998
+Off percentage: 0.0%
+
+Couldn't find optimal data for instances/eil101.tsp
+
+instances/eil51.tsp
+Avg cost: 426.0
+Avg time: 0.2537604
+Off percentage: 0.0%
+
+instances/eil76.tsp
+Avg cost: 538.0
+Avg time: 1.0130193
+Off percentage: 0.0%
+
+instances/fri26.tsp
+Avg cost: 937.0
+Avg time: 0.026077700000000002
+Off percentage: 0.0%
+
+instances/gr120.tsp
+Avg cost: 6942.0
+Avg time: 5.964375
+Off percentage: 0.0%
+
+instances/gr137.tsp
+Avg cost: 69853.0
+Avg time: 7.755331
+Off percentage: 0.0%
+
+instances/gr17.tsp
+Avg cost: 2085.0
+Avg time: 0.0067921
+Off percentage: 0.0%
+
+instances/gr21.tsp
+Avg cost: 2707.0
+Avg time: 0.0126367
+Off percentage: 0.0%
+
+instances/gr24.tsp
+Avg cost: 1272.0
+Avg time: 0.0207697
+Off percentage: 0.0%
+
+instances/gr48.tsp
+Avg cost: 5046.0
+Avg time: 0.21500360000000002
+Off percentage: 0.0%
+
+instances/gr96.tsp
+Avg cost: 55209.0
+Avg time: 2.2491570000000003
+Off percentage: 0.0%
+
+instances/hk48.tsp
+Avg cost: 11461.0
+Avg time: 0.22100399999999998
+Off percentage: 0.0%
+
+instances/kroA100.tsp
+Avg cost: 21282.0
+Avg time: 2.454527
+Off percentage: 0.0%
+
+instances/kroA150.tsp
+Avg cost: 26524.1
+Avg time: 11.220379999999999
+Off percentage: 0.0003770170411647746%
+
+instances/kroA200.tsp
+Avg cost: 29368.0
+Avg time: 57.83601000000001
+Off percentage: 0.0%
+
+instances/kroB100.tsp
+Avg cost: 22141.0
+Avg time: 2.657024
+Off percentage: 0.0%
+
+instances/kroB150.tsp
+Avg cost: 26130.0
+Avg time: 11.397320000000002
+Off percentage: 0.0%
+
+instances/kroB200.tsp
+Avg cost: 29437.0
+Avg time: 58.11659999999999
+Off percentage: 0.0%
+
+instances/kroC100.tsp
+Avg cost: 20749.0
+Avg time: 2.517687
+Off percentage: 0.0%
+
+instances/kroD100.tsp
+Avg cost: 21294.0
+Avg time: 2.7358909999999996
+Off percentage: 0.0%
+
+instances/kroE100.tsp
+Avg cost: 22068.0
+Avg time: 2.736183
+Off percentage: 0.0%
+
+instances/lin105.tsp
+Avg cost: 14379.0
+Avg time: 2.8367200000000006
+Off percentage: 0.0%
+
+instances/pr107.tsp
+Avg cost: 44303.0
+Avg time: 3.07843
+Off percentage: 0.0%
+
+instances/pr124.tsp
+Avg cost: 59030.0
+Avg time: 4.560513
+Off percentage: 0.0%
+
+instances/pr136.tsp
+Avg cost: 96772.0
+Avg time: 8.391929999999999
+Off percentage: 0.0%
+
+instances/pr144.tsp
+Avg cost: 58537.0
+Avg time: 7.307083
+Off percentage: 0.0%
+
+instances/pr152.tsp
+Avg cost: 73682.0
+Avg time: 13.959750000000003
+Off percentage: 0.0%
+
+instances/pr76.tsp
+Avg cost: 108159.0
+Avg time: 0.9810967999999999
+Off percentage: 0.0%
+
+instances/rat195.tsp
+Avg cost: 2324.8
+Avg time: 45.960420000000006
+Off percentage: 0.0774860094705201%
+
+instances/rat99.tsp
+Avg cost: 1211.0
+Avg time: 2.550193
+Off percentage: 0.0%
+
+instances/rd100.tsp
+Avg cost: 7910.0
+Avg time: 2.607203
+Off percentage: 0.0%
+
+instances/si175.tsp
+Avg cost: 21407.0
+Avg time: 24.98346
+Off percentage: 0.0%
+
+instances/st70.tsp
+Avg cost: 675.0
+Avg time: 0.7494043999999999
+Off percentage: 0.0%
+
+instances/swiss42.tsp
+Avg cost: 1273.0
+Avg time: 0.1256137
+Off percentage: 0.0%
+
+instances/u159.tsp
+Avg cost: 42080.0
+Avg time: 16.92226
+Off percentage: 0.0%
+
+instances/ulysses16.tsp
+Avg cost: 6859.0
+Avg time: 0.006073300000000001
+Off percentage: 0.0%
+
+instances/ulysses22.tsp
+Avg cost: 7013.0
+Avg time: 0.014704899999999998
+Off percentage: 0.0%
+

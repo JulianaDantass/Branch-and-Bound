@@ -1,0 +1,45 @@
+instances/a280.tsp
+Avg cost: 2579.0
+Avg time: 140.84639999999996
+Off percentage: 0.0%
+
+instances/gil262.tsp
+Avg cost: 2378.6
+Avg time: 142.1806
+Off percentage: 0.025231286795622754%
+
+instances/gr202.tsp
+Avg cost: 40161.5
+Avg time: 57.83557999999999
+Off percentage: 0.003735059760956175%
+
+instances/gr229.tsp
+Avg cost: 134606.2
+Avg time: 93.43477
+Off percentage: 0.0031203102479990205%
+
+instances/pr226.tsp
+Avg cost: 80369.0
+Avg time: 63.66345
+Off percentage: 0.0%
+
+instances/pr264.tsp
+Avg cost: 49135.0
+Avg time: 103.94373
+Off percentage: 0.0%
+
+instances/pr299.tsp
+Avg cost: 48191.0
+Avg time: 215.20299999999997
+Off percentage: 0.0%
+
+instances/ts225.tsp
+Avg cost: 126643.0
+Avg time: 46.96639
+Off percentage: 0.0%
+
+instances/tsp225.tsp
+Avg cost: 3916.0
+Avg time: 84.1433
+Off percentage: -0.07655014034192395%
+
