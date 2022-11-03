@@ -59,16 +59,33 @@ struct Node {     //estrutura para cada nó da árvore
 
 int ExtractingSubtours(int last_node, hungarian_problem_t &p){     //funcao para ajudar a extrair os subtours 
 
-	last_node= -1;
+	int out= -1;
 
-	for(int j = 0; j < p->num_cols; j++){
+	for(int j = 0; j < p.num_cols; j++){
 
-		if(p->assignment[last_node][j] == 1){
+		if(p.assignment[last_node][j] == 1){
 
-			last_node = j;
+			out = j;
 		}
 	} 
 	
+	return out;
+}
+
+int ExcludingNode(vector<int> &nodes, int node_to_exclude){
+
+	int out= -1; 
+
+	for(int i = 0; i < nodes.size(); i++){
+
+		if(nodes[i] == node_to_exclude){
+
+			out= 1;
+			nodes.erase(nodes.begin()+i);
+		}
+	}
+
+	return out;
 }
 
 
@@ -107,35 +124,58 @@ int main(int argc, char** argv) {
 
 	//cout << "ola " << p.assignment[1][0];
 	//exit(0);
+	int out;
+	int last_node;
+
+	vector<int> tours;
+	vector<int> total_nodes; 
+	vector<vector<int>> total_subtours(p.num_rows);
+
+	for (int i = 0; i < p.num_rows; i++){                          
+		
+		total_nodes.push_back(i);
+	}
 
 
-	vector<int> tour;              //1 possibilidade de tour
-	vector<int> inicial_nodes;
-	int last_node= 0; 
+	while(1){
 
-	
-	for (int i = 0; i < p.num_rows; i++){                          //tentando extrair os subtours do assignment
+		last_node = total_nodes[0];                            //o ultimo no
 
-		flag= 0;
+		cout << "last node" << last_node;
 
-		for (int j = 0; j < p.num_cols; j++){
+		for (int i = 0; i < p.num_rows; i++){        
 
-			if(p.assignment[i][j] == 1){
+			for (int j = 0; j < p.num_cols; j++){                         
 
-				inicial_nodes.push_back(i);
-				while(1){
+				if(p.assignment[i][j] == 1 && (i == last_node) ){
 					
-					last_node= j;
-					if(ExtractingSubtours(last_node, p)){
+					cout << "i " << i << " j " << j;
 
-					}else{
-						break;
-					}
-
+					tours.push_back(i+1);
+					last_node =  j;
+					
+					// cout << "last node " << j;
+					out= ExcludingNode(total_nodes, i);
+	
 				}
 			}
+			
+			total_subtours(tours);                               //adicionando os subtours;
+
+			if(out == -1){
+						
+				break; 
+			}
+			
 		}
+
+		if(total_nodes.empty()){
+			break;
+		}
+	
 	}
+	
+	
 
 
 	//----------- deletando memória ------------------//
