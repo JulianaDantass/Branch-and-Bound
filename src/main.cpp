@@ -57,35 +57,42 @@ struct Node {     //estrutura para cada nó da árvore
 // }
 
 
-int ExtractingSubtours(int last_node, hungarian_problem_t &p){     //funcao para ajudar a extrair os subtours 
+int ExtractingSubtours(int last_node, int inicial_node, hungarian_problem_t p){     //funcao para ajudar a extrair os subtours 
 
-	int out= -1;
+	int out;
 
 	for(int j = 0; j < p.num_cols; j++){
 
 		if(p.assignment[last_node][j] == 1){
 
-			out = j;
+			if(j == inicial_node){                  //se o ultimo j for o igual ao nó inicial retorna a flag -1 
+				
+				out = -1;
+			}else{
+
+				out = j;
+			}
+			
 		}
 	} 
-	
-	return out;
 }
 
-int ExcludingNode(vector<int> &nodes, int node_to_exclude){
+void ExcludingNodes(vector<int> &nodes, vector<int> tour_to_exclue){
 
-	int out= -1; 
+	int count = 0;
 
 	for(int i = 0; i < nodes.size(); i++){
 
-		if(nodes[i] == node_to_exclude){
+		for(int j = 0; j < tour_to_exclue.size(); j++){
 
-			out= 1;
-			nodes.erase(nodes.begin()+i);
+			count++;
+
+			if(nodes[i] == tour_to_exclue[j]-1){
+
+				nodes.erase(nodes.begin()+i);
+			}
 		}
 	}
-
-	return out;
 }
 
 
@@ -127,9 +134,9 @@ int main(int argc, char** argv) {
 	int out;
 	int last_node;
 
-	vector<int> tours;
+	
 	vector<int> total_nodes; 
-	vector<vector<int>> total_subtours(p.num_rows);
+	vector<vector<int>> total_subtours;
 
 	for (int i = 0; i < p.num_rows; i++){                          
 		
@@ -139,43 +146,56 @@ int main(int argc, char** argv) {
 
 	while(1){
 
-		last_node = total_nodes[0];                            //o ultimo no
+		vector<int> tour;
+		int flag = 0;
 
-		cout << "last node" << last_node;
+		last_node = total_nodes[0];
 
-		for (int i = 0; i < p.num_rows; i++){        
+		for(int z = 0; z < total_nodes.size(); z++){
+
+			int i = total_nodes[z]; 
 
 			for (int j = 0; j < p.num_cols; j++){                         
 
-				if(p.assignment[i][j] == 1 && (i == last_node) ){
+				if(p.assignment[i][j] == 1 and (last_node == i) ){
 					
-					cout << "i " << i << " j " << j;
+					//cout << i << " " << j << endl;
+					//getchar();
 
-					tours.push_back(i+1);
-					last_node =  j;
-					
-					// cout << "last node " << j;
-					out= ExcludingNode(total_nodes, i);
-	
+					tour.push_back(i+1);
+
+					if(j == tour[0]-1){
+						tour.push_back(tour[0]);
+					}
+
+					last_node = j;
+
+					break;
 				}
 			}
-			
-			total_subtours(tours);                               //adicionando os subtours;
+    	}
 
-			if(out == -1){
-						
-				break; 
-			}
-			
+		if( total_nodes.empty() ){             //se nao tem mais nós a pecorrer
+				break;
+
+		}else{
+			total_subtours.push_back(tour);
+			ExcludingNodes(total_nodes, tour);
 		}
 
-		if(total_nodes.empty()){
-			break;
-		}
-	
+		//getchar();
 	}
 	
-	
+
+		for(int i= 0; i < total_subtours.size(); i++){
+			cout << "imprimindo tour: " << endl;
+
+			for(int j= 0; j < total_subtours[i].size(); j++){
+
+				cout << total_subtours[i][j] << " ";
+			}
+			cout << endl;
+		}
 
 
 	//----------- deletando memória ------------------//
