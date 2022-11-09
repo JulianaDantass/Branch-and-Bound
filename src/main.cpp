@@ -102,9 +102,10 @@ Node chooseNode(Node node){
 
 }
 
-vector<vector<int>> getSolutionHungarian(Data *data){
+vector<vector<int>> getSolutionHungarian(Node node, double dimension){
 
 	hungarian_problem_t p;
+
 	int mode = HUNGARIAN_MODE_MINIMIZE_COST;
 	hungarian_init(&p, cost, data->getDimension(), data->getDimension(), mode); // Carregando o problema
 
@@ -115,15 +116,22 @@ vector<vector<int>> getSolutionHungarian(Data *data){
 	//cout << "Assignment" << endl;
 	hungarian_print_assignment(&p);
 
-	Node root;                    //primeira raiz
+	node.subtours = GetSubtours(p);       //extrair os subtours da solucao
+	node.lower_bound = obj_value;
 
-	root.subtours = GetSubtours(p);       //extrair os subtours da solucao
+	if(node.subtours.size() == 1){
+		
+		node.feasible = true;            //solucao é viavel para o tsp
+	}else{
+		node.feasible = false;          //solucao nao é viavel para o tsp
+	}
 }
 
 
-void BnB (Node &root, Data *data){
+void BnB (Data *data){
 
-	std::list<Node> tree;           //declarando a variavel arvore
+	Node root;
+	std::list<Node> tree;           
 
 	tree.push_back(root);
 	double upper_bound = std::numeric_limits::infinity<double>();
@@ -131,7 +139,7 @@ void BnB (Node &root, Data *data){
 	while (!tree.empty()){
 
 		auto node = chooseNode();
-		vector<vector<int>> subtour = getSolutionHungarian(node, data);
+		vector<vector<int>> subtour = getSolutionHungarian(node, data->dimension);
 	
 		if (node->lower_bound > upper_bound){
 			tree.erase(node);
@@ -151,7 +159,7 @@ void BnB (Node &root, Data *data){
 			std::pair<int, int> forbidden_arc= {node.subtour[root.chosen][i], node.subtour[root.chosen][i+1]};
 
 			n.forbidden_arcs.push_back(forbidden_arc);
-			thee.push_back(n);
+			tree.push_back(n);
 		}
 		
 		tree.erase(node);
@@ -178,20 +186,13 @@ int main(int argc, char** argv) {
 	}
 
 
-	if(root.subtours.size() != 1){      //nao eh uma solucao otima
-
-		BnB(root, data);                    //chamando o algoritmo Branch and Bound
-	}
+	BnB(data);                    //chamando o algoritmo Branch and Bound
 
 
 
 
 	//PrintSubtours(total_subtours);          //funcao para imprimir os subtours
 		
-	
-
-
-
 	
 
 	//----------- deletando memória ------------------//
