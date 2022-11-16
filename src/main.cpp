@@ -2,6 +2,7 @@
 #include <vector>
 #include <iterator>
 #include <list>
+#include <limits>
 #include "data.h"
 #include "hungarian.h"
 
@@ -84,6 +85,25 @@ vector<vector<int>> GetSubtours(hungarian_problem_t pointer){            //funca
 	return total_subtours;
 }
 
+void PrintInformationNode(Node &some_node){         //funcao para printar as informacoes node
+
+
+	for(int i = 0; i < some_node.subtours.size(); i++){     //pritando os subtours
+
+		cout << "SUBTOUR " << i << " :" << endl;
+
+		for(j = 0; j < some_node.subtours[i].size(); j++){
+
+			cout << some_node.subtour[i][j] << " ";
+		}
+
+		cout << endl;
+	}
+
+	cout << "LOWER BOUND: " << 	some_node.lower_bound << endl;
+	cout << "FEASIBLE: " << some_node.feasible << endl;
+
+}
 
 void PrintSubtours(vector<vector<int>> t_subtours){                   //funcao auxiliar
 
@@ -102,13 +122,13 @@ Node chooseNode(Node node){
 
 }
 
-vector<vector<int>> getSolutionHungarian(Node node, double dimension){
+void getSolutionHungarian(Node &node, double dimension, double **cost){
 
 	hungarian_problem_t p;
 
 	int mode = HUNGARIAN_MODE_MINIMIZE_COST;
-	hungarian_init(&p, cost, data->getDimension(), data->getDimension(), mode); // Carregando o problema
-
+	//hungarian_init(&p, cost, data->getDimension(), data->getDimension(), mode); 
+	hungarian_init(&p, cost, dimension, dimension, mode); 
 
 	double obj_value = hungarian_solve(&p);
 	//cout << "Obj. value: " << obj_value << endl;
@@ -125,45 +145,54 @@ vector<vector<int>> getSolutionHungarian(Node node, double dimension){
 	}else{
 		node.feasible = false;          //solucao nao é viavel para o tsp
 	}
+
+	hungarian_free(&p);
 }
 
 
-void BnB (Data *data){
+void BnB (Data *data, double **cost){
 
 	Node root;
+
+	getSolutionHungarian(root, data->getDimension(), cost);             //chamando o algoritmo para resolucao da primeira raiz
+
+	PrintInformationNode(root);         //printar as informacoes do nó 
+	getchar();
+	
+
 	std::list<Node> tree;           
 
 	tree.push_back(root);
-	double upper_bound = std::numeric_limits::infinity<double>();
+	double upper_bound = std::numeric_limits<double>::infinity();
 
-	while (!tree.empty()){
+	// while (!tree.empty()){
 
-		auto node = chooseNode();
-		vector<vector<int>> subtour = getSolutionHungarian(node, data->dimension);
+	// 	auto node = chooseNode();
+	// 	vector<vector<int>> subtour = getSolutionHungarian(node, data->dimension);
 	
-		if (node->lower_bound > upper_bound){
-			tree.erase(node);
-			continue;
-		}
+	// 	if (node->lower_bound > upper_bound){
+	// 		tree.erase(node);
+	// 		continue;
+	// 	}
 
-		if (node->feasible){
-			upper_bound = min(upper_bound, node->lower_bound);
-		}
+	// 	if (node->feasible){
+	// 		upper_bound = min(upper_bound, node->lower_bound);
+	// 	}
 		
-		/* Gerando os filhos do no raiz */
-		for(int i = 0; i < node.subtour[root.chosen].size() - 1; i++){ // iterar por todos os arcos do subtour escolhido
+	// 	/* Gerando os filhos do no raiz */
+	// 	for(int i = 0; i < node.subtour[root.chosen].size() - 1; i++){ // iterar por todos os arcos do subtour escolhido
 
-			Node n;
-			n.arcos_proibidos = raiz.arcos_proibidos;
+	// 		Node n;
+	// 		n.arcos_proibidos = raiz.forbidden_arc;
 
-			std::pair<int, int> forbidden_arc= {node.subtour[root.chosen][i], node.subtour[root.chosen][i+1]};
+	// 		std::pair<int, int> forbidden_arc= {node.subtour[root.chosen][i], node.subtour[root.chosen][i+1]};
 
-			n.forbidden_arcs.push_back(forbidden_arc);
-			tree.push_back(n);
-		}
+	// 		n.forbidden_arcs.push_back(forbidden_arc);
+	// 		tree.push_back(n);
+	// 	}
 		
-		tree.erase(node);
-	}
+	// 	tree.erase(node);
+	// }
 	
 }
 
@@ -186,7 +215,7 @@ int main(int argc, char** argv) {
 	}
 
 
-	BnB(data);                    //chamando o algoritmo Branch and Bound
+	BnB(data, cost);                    //chamando o algoritmo Branch and Bound
 
 
 
@@ -197,7 +226,6 @@ int main(int argc, char** argv) {
 
 	//----------- deletando memória ------------------//
 
-	hungarian_free(&p);
 	for (int i = 0; i < data->getDimension(); i++) delete [] cost[i];
 	delete [] cost;
 	delete data;
