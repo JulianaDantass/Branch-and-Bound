@@ -11,7 +11,7 @@ using namespace std;
 struct Node {     //estrutura para cada nó da árvore
 
 	std::vector<pair<int, int>> forbidden_arcs;     //lista de arcos proibidos
-	std::vector<std::vector<int>> subtours;          //contem os subtours
+	std::vector<std::vector<int>> subtours;          //contem os subtours fkdokfdokfod
 
 	double lower_bound;             //custo total da solucao do algoritmo hungaro
 	int chosen;                     // indice do menor subtour (que será escolhido)
