@@ -10,10 +10,10 @@ using namespace std;
 
 struct Node {     //estrutura para cada nó da árvore
 
-	std::vector<pair<int, int>> forbidden_arcs;     //lista de arcos proibidos
-	std::vector<std::vector<int>> subtours;          //contem os subtours fkdokfdokfod
+	std::vector<pair<int, int>> forbidden_arcs = {};     //lista de arcos proibidos
+	std::vector<std::vector<int>> subtours;          //contem os subtours 
 
-	double lower_bound;             //custo total da solucao do algoritmo hungaro
+	double lower_bound = 0;             //custo total da solucao do algoritmo hungaro
 	int chosen;                     // indice do menor subtour (que será escolhido)
 	bool feasible;                  //indica se a solucao do AP é viável pra o TSP 
  };
@@ -106,9 +106,27 @@ void PrintInformationNode(Node &some_node){         //funcao para printar as inf
 
 }
 
-auto chooseNode(std::list<Node> &tree){
+list<Node>::iterator chooseNode(std::list<Node> &tree){      //seleciona o nó pelo menor LB
 
-	return tree.begin();
+	Node node_analysed;
+	double lowerLB;
+
+	list<Node>::iterator it_chosen = tree.begin();       //só inicializando
+
+	lowerLB = (double)INFINITY;
+
+	for(auto it = tree.begin(); it != tree.end(); it++){
+
+		node_analysed = *it;
+
+		if(node_analysed.lower_bound < lowerLB){
+			
+			lowerLB = node_analysed.lower_bound;
+			it_chosen = it;
+		}
+	}
+	
+	return it_chosen;
 }
 
 int chooseSubtour (std::vector<std::vector<int>> current){
@@ -151,17 +169,27 @@ int chooseSubtour (std::vector<std::vector<int>> current){
 
 void getSolutionHungarian(Node &node, double dimension, double **cost){
 
+
+	//*********modificando custos *******************
+
+	for(int i = 0; i < node.forbidden_arcs.size(); i++){       //os arcos proibidos tem seu valor como infinito
+
+		cost[node.forbidden_arcs[i].first][node.forbidden_arcs[i].second] = (double) INFINITY;
+
+	}
+
+	//************************************************
+
+
 	hungarian_problem_t p;
 
 	int mode = HUNGARIAN_MODE_MINIMIZE_COST;
 	//hungarian_init(&p, cost, data->getDimension(), data->getDimension(), mode); 
+
 	hungarian_init(&p, cost, dimension, dimension, mode); 
 
-	double obj_value = hungarian_solve(&p);
-	//cout << "Obj. value: " << obj_value << endl;
-
-	//cout << "Assignment" << endl;
-	hungarian_print_assignment(&p);
+	double obj_value = hungarian_solve(&p);    //printa o valor objetivo
+	//hungarian_print_assignment(&p);            //printa o assignment
 
 	node.subtours = GetSubtours(p);       //extrair os subtours da solucao
 	node.lower_bound = obj_value;
@@ -192,9 +220,13 @@ void BnB (Data *data, double **cost){
 
 		auto node = chooseNode(tree);
 
+
 		getSolutionHungarian(*node, data->getDimension(), cost);
 	
 		Node current_node = *node;
+
+		PrintInformationNode(current_node);   //printando o node atual
+		getchar();                            //teste 
 
 		if (current_node.lower_bound > upper_bound){    //se a solucao menos restritar for maior que o UB, é descartada
 			
@@ -212,16 +244,18 @@ void BnB (Data *data, double **cost){
 		
 		current_node.chosen = chooseSubtour(current_node.subtours);      //funcao que determina qual subtour será escolhido 
 
+
 		/* Gerando os filhos do no raiz */
 		for(int i = 0; i < current_node.subtours[current_node.chosen].size() - 1; i++){  // *tentar tirar duvida disso aqui 
 
-			Node n;
-			n.arcos_proibidos = raiz.forbidden_arc;
+			Node branch;
+			std::pair<int, int> new_forbidden;
 
-			std::pair<int, int> forbidden_arc = {current_node.subtours[current_node.chosen][i], current_node.subtours[current_node.chosen][i+1]};
+			branch.forbidden_arcs = current_node.forbidden_arcs;    //herdando os arcos proibidos do nó mãe 
+			new_forbidden = {current_node.subtours[current_node.chosen][i], current_node.subtours[current_node.chosen][i+1]};
 
-			n.forbidden_arcs.push_back(forbidden_arc);
-			tree.push_back(n);
+			branch.forbidden_arcs.push_back(new_forbidden);
+			tree.push_back(branch);
 		}
 		
 		tree.erase(node);
@@ -239,7 +273,7 @@ int main(int argc, char** argv) {
 
 	double **cost = new double*[data->getDimension()];
 
-	cout << "this is dimension " << data->getDimension();
+	cout << "this is dimension " << data->getDimension() << endl;
 
 	for (int i = 0; i < data->getDimension(); i++){
 		cost[i] = new double[data->getDimension()];
@@ -248,14 +282,9 @@ int main(int argc, char** argv) {
 		}
 	}
 
-
 	BnB(data, cost);                    //chamando o algoritmo Branch and Bound
 
 
-
-
-	//PrintSubtours(total_subtours);          //funcao para imprimir os subtours
-		
 	
 
 	//----------- deletando memória ------------------//
