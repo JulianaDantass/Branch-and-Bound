@@ -11,11 +11,11 @@ using namespace std;
 struct Node {     //estrutura para cada nó da árvore
 
 	std::vector<pair<int, int>> forbidden_arcs = {};     //lista de arcos proibidos
-	std::vector<std::vector<int>> subtours;          //contem os subtours 
+	std::vector<std::vector<int>> subtours = {};          //contem os subtours 
 
 	double lower_bound = 0;             //custo total da solucao do algoritmo hungaro
-	int chosen;                     // indice do menor subtour (que será escolhido)
-	bool feasible;                  //indica se a solucao do AP é viável pra o TSP 
+	int chosen = -1;                     // indice do menor subtour (que será escolhido)
+	bool feasible = 0;                  //indica se a solucao do AP é viável pra o TSP 
  };
 
 
@@ -91,7 +91,7 @@ void PrintInformationNode(Node &some_node){         //funcao para printar as inf
 
 	for(int i = 0; i < some_node.subtours.size(); i++){     //pritando os subtours
 
-		cout << "SUBTOUR " << i << " :" << endl;
+		cout << "SUBTOUR " << i << " : ";
 
 		for(int j = 0; j < some_node.subtours[i].size(); j++){
 
@@ -101,7 +101,15 @@ void PrintInformationNode(Node &some_node){         //funcao para printar as inf
 		cout << endl;
 	}
 
+	for(int i = 0; i < some_node.forbidden_arcs.size(); i++){     //pritando os subtours
+
+		cout << "FORBIDDEN ARCS " << i << " : ";
+		cout << some_node.forbidden_arcs[i].first  << " " << some_node.forbidden_arcs[i].second << endl;
+	}
+
+
 	cout << "LOWER BOUND: " << 	some_node.lower_bound << endl;
+	cout << "CHOSEN: " << some_node.chosen << endl;
 	cout << "FEASIBLE: " << some_node.feasible << endl;
 
 }
@@ -174,8 +182,7 @@ void getSolutionHungarian(Node &node, int dimension, vector<vector<double>> cost
 
 	for(int i = 0; i < node.forbidden_arcs.size(); i++){       //os arcos proibidos tem seu valor como infinito
 
-		cost[node.forbidden_arcs[i].first][node.forbidden_arcs[i].second] = (double) INFINITY;
-
+		cost[node.forbidden_arcs[i].first-1][node.forbidden_arcs[i].second-1] = 9999999999;
 	}
 
 	double **new_cost = new double*[dimension];
@@ -185,11 +192,12 @@ void getSolutionHungarian(Node &node, int dimension, vector<vector<double>> cost
 
 		for (int j = 0; j < dimension; j++){
 			new_cost[i][j] = cost[i][j];
+
+			cout << "arc: " << i << " " << j << "  cost: " << new_cost[i][j] << endl;
 		}
 	}
 
 	//************************************************
-
 
 	hungarian_problem_t p;
 
@@ -197,8 +205,10 @@ void getSolutionHungarian(Node &node, int dimension, vector<vector<double>> cost
 	//hungarian_init(&p, cost, data->getDimension(), data->getDimension(), mode); 
 
 	hungarian_init(&p, new_cost, dimension, dimension, mode); 
+	cout << "chegou"; 
 
 	double obj_value = hungarian_solve(&p);    //printa o valor objetivo
+
 	//hungarian_print_assignment(&p);            //printa o assignment
 
 	node.subtours = GetSubtours(p);       //extrair os subtours da solucao
@@ -233,13 +243,10 @@ void BnB (Data *data, vector<vector<double>> &cost){
 
 		auto node = chooseNode(tree);
 
-
 		getSolutionHungarian(*node, data->getDimension(), cost);
 	
 		Node current_node = *node;
 
-		PrintInformationNode(current_node);   //printando o node atual
-		getchar();                            //teste 
 
 		if (current_node.lower_bound > upper_bound){    //se a solucao menos restritar for maior que o UB, é descartada
 			
@@ -257,6 +264,9 @@ void BnB (Data *data, vector<vector<double>> &cost){
 		
 		current_node.chosen = chooseSubtour(current_node.subtours);      //funcao que determina qual subtour será escolhido 
 
+		PrintInformationNode(current_node);   //printando o node atual
+		getchar();                            //teste 
+
 
 		/* Gerando os filhos do no raiz */
 		for(int i = 0; i < current_node.subtours[current_node.chosen].size() - 1; i++){  // *tentar tirar duvida disso aqui 
@@ -268,6 +278,7 @@ void BnB (Data *data, vector<vector<double>> &cost){
 			new_forbidden = {current_node.subtours[current_node.chosen][i], current_node.subtours[current_node.chosen][i+1]};
 
 			branch.forbidden_arcs.push_back(new_forbidden);
+
 			tree.push_back(branch);
 		}
 		
