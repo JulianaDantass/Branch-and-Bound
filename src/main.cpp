@@ -175,27 +175,27 @@ int chooseSubtour (std::vector<std::vector<int>> current){
 }
 
 
-void getSolutionHungarian(Node &node, int dimension, vector<vector<double>> cost){
+void getSolutionHungarian(Node &node, int dimension, vector<vector<double>> &cost){
 
 
 	//*********modificando custos *******************
 
-	for(int i = 0; i < node.forbidden_arcs.size(); i++){       //os arcos proibidos tem seu valor como infinito
-
-		cost[node.forbidden_arcs[i].first-1][node.forbidden_arcs[i].second-1] = 9999999999;
-	}
-
-	double **new_cost = new double*[dimension];
+	double **new_cost = new double*[dimension];           //alocando a matriz como um double ** 
 
 	for (int i = 0; i < dimension; i++){
 		new_cost[i] = new double[dimension];
 
 		for (int j = 0; j < dimension; j++){
 			new_cost[i][j] = cost[i][j];
-
-			cout << "arc: " << i << " " << j << "  cost: " << new_cost[i][j] << endl;
 		}
 	}
+
+
+	for(int i = 0; i < node.forbidden_arcs.size(); i++){       //os arcos proibidos tem seu valor como infinito
+
+		new_cost[node.forbidden_arcs[i].first-1][node.forbidden_arcs[i].second-1] = 99999999;
+	}
+
 
 	//************************************************
 
@@ -204,12 +204,11 @@ void getSolutionHungarian(Node &node, int dimension, vector<vector<double>> cost
 	int mode = HUNGARIAN_MODE_MINIMIZE_COST;
 	//hungarian_init(&p, cost, data->getDimension(), data->getDimension(), mode); 
 
-	hungarian_init(&p, new_cost, dimension, dimension, mode); 
-	cout << "chegou"; 
+	hungarian_init(&p, new_cost, dimension, dimension, mode);  
 
 	double obj_value = hungarian_solve(&p);    //printa o valor objetivo
 
-	//hungarian_print_assignment(&p);            //printa o assignment
+	hungarian_print_assignment(&p);            //printa o assignment
 
 	node.subtours = GetSubtours(p);       //extrair os subtours da solucao
 	node.lower_bound = obj_value;
@@ -248,7 +247,7 @@ void BnB (Data *data, vector<vector<double>> &cost){
 		Node current_node = *node;
 
 
-		if (current_node.lower_bound > upper_bound){    //se a solucao menos restritar for maior que o UB, é descartada
+		if (current_node.lower_bound > upper_bound){    //se a solucao menos restrita for maior que o UB, é descartada
 			
 			tree.erase(node);
 			continue;
