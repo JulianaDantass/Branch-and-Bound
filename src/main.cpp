@@ -167,7 +167,7 @@ int chooseSubtour (std::vector<std::vector<int>> current){
 }
 
 
-void getSolutionHungarian(Node &node, double dimension, double **cost){
+void getSolutionHungarian(Node &node, int dimension, vector<vector<double>> cost){
 
 
 	//*********modificando custos *******************
@@ -178,6 +178,16 @@ void getSolutionHungarian(Node &node, double dimension, double **cost){
 
 	}
 
+	double **new_cost = new double*[dimension];
+
+	for (int i = 0; i < dimension; i++){
+		new_cost[i] = new double[dimension];
+
+		for (int j = 0; j < dimension; j++){
+			new_cost[i][j] = cost[i][j];
+		}
+	}
+
 	//************************************************
 
 
@@ -186,7 +196,7 @@ void getSolutionHungarian(Node &node, double dimension, double **cost){
 	int mode = HUNGARIAN_MODE_MINIMIZE_COST;
 	//hungarian_init(&p, cost, data->getDimension(), data->getDimension(), mode); 
 
-	hungarian_init(&p, cost, dimension, dimension, mode); 
+	hungarian_init(&p, new_cost, dimension, dimension, mode); 
 
 	double obj_value = hungarian_solve(&p);    //printa o valor objetivo
 	//hungarian_print_assignment(&p);            //printa o assignment
@@ -201,11 +211,14 @@ void getSolutionHungarian(Node &node, double dimension, double **cost){
 		node.feasible = false;          //solucao nao é viavel para o tsp
 	}
 
+
+	for (int i = 0; i < dimension; i++) delete [] new_cost[i];
+	delete [] new_cost;
 	hungarian_free(&p);
 }
 
 
-void BnB (Data *data, double **cost){
+void BnB (Data *data, vector<vector<double>> &cost){
 
 	Node root;
 
@@ -271,28 +284,36 @@ int main(int argc, char** argv) {
 	Data *data = new Data(argc, argv[1]);
 	data->readData();
 
-	double **cost = new double*[data->getDimension()];
-
 	cout << "this is dimension " << data->getDimension() << endl;
 
+	vector<vector<double>> cost(data->getDimension());
+
+	//double **cost = new double*[data->getDimension()];
+
+	for (int i = 0; i < cost.size(); i++){
+	
+		for (int j = 0; j < cost.size(); j++){
+
+			cost[i].push_back( data->getDistance(i,j) );
+		}
+	}
+	
+
+	BnB(data, cost);                    //chamando o algoritmo Branch and Bound
+
+	
+
+	//----------- deletando memória ------------	
+	delete data;
+
+	return 0;
+}
+
+/*
 	for (int i = 0; i < data->getDimension(); i++){
 		cost[i] = new double[data->getDimension()];
 		for (int j = 0; j < data->getDimension(); j++){
 			cost[i][j] = data->getDistance(i,j);
 		}
 	}
-
-	BnB(data, cost);                    //chamando o algoritmo Branch and Bound
-
-
-	
-
-	//----------- deletando memória ------------------//
-
-	for (int i = 0; i < data->getDimension(); i++) delete [] cost[i];
-	delete [] cost;
-	delete data;
-	//------------------------------------------------//
-
-	return 0;
-}
+	*/
