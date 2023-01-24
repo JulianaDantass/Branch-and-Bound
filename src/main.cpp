@@ -19,15 +19,18 @@ struct Node {     //estrutura para cada nó da árvore
  };
 
 
-void ExcludingNodes(vector<int> &nodes, vector<int> tour_to_exclue){      //funcao auxiliar 
+void ExcludingNodes(vector<int> &nodes, vector<int> &tour_to_exclue){      //funcao auxiliar 
+
 
 	for(int i = 0; i < nodes.size(); i++){
 
 		for(int j = 0; j < tour_to_exclue.size(); j++){
 
 			if(nodes[i] == tour_to_exclue[j]-1){
-
+				
+				//cout << "no excluido " << nodes[i] << endl;
 				nodes.erase(nodes.begin()+i);
+				i = 0;
 			}
 		}
 	}
@@ -49,26 +52,35 @@ vector<vector<int>> GetSubtours(hungarian_problem_t pointer){            //funca
 
 		vector<int> tour;
 
-		last_node = total_nodes[0];                //definindo o nó inicial
-
+		
+		last_node = total_nodes[0];
+		
 		for(int z = 0; z < total_nodes.size(); z++){
 
-			int i = total_nodes[z]; 
+			int i = total_nodes[z];
+			out = 0;
 
 			for (int j = 0; j < pointer.num_cols; j++){                         
 
 				if(pointer.assignment[i][j] == 1 and (last_node == i) ){
 
 					tour.push_back(i+1);
+					
 
 					if(j == tour[0]-1){                  //se a estação atual for igual a estação inicial, significa q o tour terminou
 						tour.push_back(tour[0]);
+						out = 1; 
+						break;
 					}
 
 					last_node = j;
-					z= 0;
+					z = 0;
 					break;
 				}
+			}
+
+			if(out){
+				break;
 			}
     	}
 
@@ -76,11 +88,12 @@ vector<vector<int>> GetSubtours(hungarian_problem_t pointer){            //funca
 			break;
 
 		}else{
-			total_subtours.push_back(tour);              //adicionando o tour a lista de subtours
+
 			ExcludingNodes(total_nodes, tour);
+			total_subtours.push_back(tour);              //adicionando o tour a lista de subtours
 		}
 
-		//getchar();
+		//getchar();	
 	}
 
 	return total_subtours;
