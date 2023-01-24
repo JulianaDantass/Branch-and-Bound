@@ -37,7 +37,7 @@ void ExcludingNodes(vector<int> &nodes, vector<int> &tour_to_exclue){      //fun
 }
 
 vector<vector<int>> GetSubtours(hungarian_problem_t pointer){            //funcao para separar os subtours
-																		 //issaq ta bichado!!!!!!1
+																	
 	int out;
 	int last_node;
 	vector<int> total_nodes; 
@@ -208,20 +208,19 @@ void getSolutionHungarian(Node &node, int dimension, vector<vector<double>> &cos
 
 		new_cost[node.forbidden_arcs[i].first-1][node.forbidden_arcs[i].second-1] = 99999999;
 	}
-
-
 	//************************************************
+
+
+
 
 	hungarian_problem_t p;
 
 	int mode = HUNGARIAN_MODE_MINIMIZE_COST;
-	//hungarian_init(&p, cost, data->getDimension(), data->getDimension(), mode); 
-
 	hungarian_init(&p, new_cost, dimension, dimension, mode);  
+	double obj_value = hungarian_solve(&p);   
+	//hungarian_print_assignment(&p);            //printa o assignment
 
-	double obj_value = hungarian_solve(&p);    //printa o valor objetivo
 
-	hungarian_print_assignment(&p);            //printa o assignment
 
 	node.subtours = GetSubtours(p);       //extrair os subtours da solucao
 	node.lower_bound = obj_value;
@@ -271,17 +270,19 @@ void BnB (Data *data, vector<vector<double>> &cost){
 			if(current_node.lower_bound < upper_bound){
 
 				upper_bound = current_node.lower_bound;
+				cout << "entro "; 
+				getchar()
 			}
 		}
 		
 		current_node.chosen = chooseSubtour(current_node.subtours);      //funcao que determina qual subtour será escolhido 
 
 		PrintInformationNode(current_node);   //printando o node atual
-		getchar();                            //teste 
+		cout << endl;
 
 
 		/* Gerando os filhos do no raiz */
-		for(int i = 0; i < current_node.subtours[current_node.chosen].size() - 1; i++){  // *tentar tirar duvida disso aqui 
+		for(int i = 0; i < current_node.subtours[current_node.chosen].size() - 1; i++){ 
 
 			Node branch;
 			std::pair<int, int> new_forbidden;
