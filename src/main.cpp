@@ -141,20 +141,20 @@ list<Node>::iterator chooseNode(std::list<Node> &tree){      //seleciona o nó p
 
 	for (auto it : tree){
 
-		PrintInformationNode(it);
+		//PrintInformationNode(it);
 
 		if(it.lower_bound < lowerLB){
 
 			lowerLB = it.lower_bound;
 			times = counter;
-			cout << "entered!!!!!!!!!";
+			//cout << "entered!!!!!!!!!";
 		}
 		counter++;
 	}
 
 	advance(it_chosen, times);
         
-	cout << "lower bound chosen " << lowerLB << endl;
+	//cout << "lower bound chosen " << lowerLB << endl;
 
 
 	return it_chosen;
@@ -283,7 +283,7 @@ void BnB (Data *data, vector<vector<double>> &cost){
 		
 		current_node.chosen = chooseSubtour(current_node.subtours);    
 		//PrintInformationNode(current_node); cout << endl;  //printando o node atual
-		getchar();
+		//getchar();
 
 
 		for(int i = 0; i < current_node.subtours[current_node.chosen].size() - 1; i++){ //gerando os nós filhos
