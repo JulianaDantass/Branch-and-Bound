@@ -13,9 +13,9 @@ struct Node {     //estrutura para cada nó da árvore
 	std::vector<pair<int, int>> forbidden_arcs = {};     //lista de arcos proibidos
 	std::vector<std::vector<int>> subtours = {};          //contem os subtours 
 
-	double lower_bound = 0;             //custo total da solucao do algoritmo hungaro
-	int chosen = -1;                     // indice do menor subtour (que será escolhido)
-	bool feasible = 0;                  //indica se a solucao do AP é viável pra o TSP 
+	double lower_bound= INFINITY;             //custo total da solucao do algoritmo hungaro
+	int chosen = -1;                       // indice do menor subtour (que será escolhido)
+	bool feasible = 0;                     //indica se a solucao do AP é viável pra o TSP 
  };
 
 
@@ -131,22 +131,32 @@ list<Node>::iterator chooseNode(std::list<Node> &tree){      //seleciona o nó p
 
 	Node node_analysed;
 	double lowerLB;
+	int counter;
+	int times;
+	list<Node>::iterator it_chosen = tree.begin();       //só inicializando o iterator da árvore
 
-	list<Node>::iterator it_chosen = tree.begin();       //só inicializando
-
-	lowerLB = (double)INFINITY;
-
-	for(auto it = tree.begin(); it != tree.end(); it++){
-
-		node_analysed = *it;
-
-		if(node_analysed.lower_bound < lowerLB){
-			
-			lowerLB = node_analysed.lower_bound;
-			it_chosen = it;
-		}
-	}
 	
+	lowerLB = (double)INFINITY;
+	counter = times = 0;      //inicializando em zero
+
+	for (auto it : tree){
+
+		PrintInformationNode(it);
+
+		if(it.lower_bound < lowerLB){
+
+			lowerLB = it.lower_bound;
+			times = counter;
+			cout << "entered!!!!!!!!!";
+		}
+		counter++;
+	}
+
+	advance(it_chosen, times);
+        
+	cout << "lower bound chosen " << lowerLB << endl;
+
+
 	return it_chosen;
 }
 
@@ -210,9 +220,6 @@ void getSolutionHungarian(Node &node, int dimension, vector<vector<double>> &cos
 	}
 	//************************************************
 
-
-
-
 	hungarian_problem_t p;
 
 	int mode = HUNGARIAN_MODE_MINIMIZE_COST;
@@ -241,48 +248,45 @@ void getSolutionHungarian(Node &node, int dimension, vector<vector<double>> &cos
 
 void BnB (Data *data, vector<vector<double>> &cost){
 
-	Node root;
+	Node root;    
+	std::list<Node> tree;    
 
-	//getSolutionHungarian(root, data->getDimension(), cost);         
-	
-	std::list<Node> tree;           
-	tree.push_back(root);           //criando a arvore e adicionando a raiz
+	getSolutionHungarian(root, data->getDimension(), cost);
+	tree.push_back(root);
 
-	double upper_bound = std::numeric_limits<double>::infinity();
+	double upper_bound = std::numeric_limits<double>::infinity();      //valor upper bound que começa no infinito
+
+
 
 	while (!tree.empty()){
 
-		auto node = chooseNode(tree);
+		auto node = chooseNode(tree);        //escolhe o nó 
 
-		getSolutionHungarian(*node, data->getDimension(), cost);
+		getSolutionHungarian(*node, data->getDimension(), cost);     //aplica o algoritmo hungaro
 	
 		Node current_node = *node;
 
 
-		if (current_node.lower_bound > upper_bound){    //se a solucao menos restrita for maior que o UB, é descartada
+		if (current_node.lower_bound > upper_bound){    //se a solucao do AP > UB, essa solução é descartada
 			
 			tree.erase(node);
 			continue;
 		}
 
-		if (current_node.feasible){
+		if (current_node.feasible){          //se o AP for solução pro TSP
 
 			if(current_node.lower_bound < upper_bound){
 
 				upper_bound = current_node.lower_bound;
-				cout << "entro "; 
-				getchar()
 			}
 		}
 		
-		current_node.chosen = chooseSubtour(current_node.subtours);      //funcao que determina qual subtour será escolhido 
+		current_node.chosen = chooseSubtour(current_node.subtours);    
+		//PrintInformationNode(current_node); cout << endl;  //printando o node atual
+		getchar();
 
-		PrintInformationNode(current_node);   //printando o node atual
-		cout << endl;
 
-
-		/* Gerando os filhos do no raiz */
-		for(int i = 0; i < current_node.subtours[current_node.chosen].size() - 1; i++){ 
+		for(int i = 0; i < current_node.subtours[current_node.chosen].size() - 1; i++){ //gerando os nós filhos
 
 			Node branch;
 			std::pair<int, int> new_forbidden;
@@ -292,29 +296,31 @@ void BnB (Data *data, vector<vector<double>> &cost){
 
 			branch.forbidden_arcs.push_back(new_forbidden);
 
+			getSolutionHungarian(branch, data->getDimension(), cost);
 			tree.push_back(branch);
 		}
 		
-		tree.erase(node);
+		tree.erase(node);      //apagando o nó mãe
 	}
+
+	cout << "upper bound: " << upper_bound << endl;
 }
 
 
 
 int main(int argc, char** argv) {      
 
-	//-------- chamando o algoritmo hungaro -----------//
+	
 
 	Data *data = new Data(argc, argv[1]);
 	data->readData();
 
 	cout << "this is dimension " << data->getDimension() << endl;
 
-	vector<vector<double>> cost(data->getDimension());
+	vector<vector<double>> cost(data->getDimension());        //declarando o vector com os custos
 
-	//double **cost = new double*[data->getDimension()];
 
-	for (int i = 0; i < cost.size(); i++){
+	for (int i = 0; i < cost.size(); i++){       //definindo os custos de acordo com valores dados em "Data"
 	
 		for (int j = 0; j < cost.size(); j++){
 
@@ -333,69 +339,3 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-/*
-	for (int i = 0; i < data->getDimension(); i++){
-		cost[i] = new double[data->getDimension()];
-		for (int j = 0; j < data->getDimension(); j++){
-			cost[i][j] = data->getDistance(i,j);
-		}
-	}
-
-vector<vector<int>> GetSubtours(hungarian_problem_t pointer){            //funcao para separar os subtours
-																		 //issaq ta bichado!!!!!!1
-	int out;
-	int last_node;
-	vector<int> total_nodes; 
-	vector<vector<int>> total_subtours;
-
-	for (int i = 0; i < pointer.num_rows; i++){                          
-		
-		total_nodes.push_back(i);
-	}
-
-	while(1){                                                 
-
-		vector<int> tour;
-
-		last_node = total_nodes[0];                //definindo o nó inicial
-
-		for(int z = 0; z < total_nodes.size(); z++){
-
-			int i = total_nodes[z]; 
-
-			for (int j = 0; j < pointer.num_cols; j++){                         
-
-				if(pointer.assignment[i][j] == 1 and (last_node == i) ){
-
-					tour.push_back(i+1);
-
-					if(j == tour[0]-1){                  //se a estação atual for igual a estação inicial, significa q o tour terminou
-						tour.push_back(tour[0]);
-					}
-
-					last_node = j;
-
-					break;
-				}
-			}
-    	}
-
-		if( total_nodes.empty() ){             //se nao tem mais nós a pecorrer
-			break;
-
-		}else{
-			total_subtours.push_back(tour);              //adicionando o tour a lista de subtours
-			ExcludingNodes(total_nodes, tour);
-		}
-
-		//getchar();
-	}
-
-	return total_subtours;
-}
-
-
-
-
-
-	*/
