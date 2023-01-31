@@ -13,7 +13,7 @@ struct Node {     //estrutura para cada nó da árvore
 	std::vector<pair<int, int>> forbidden_arcs = {};     //lista de arcos proibidos
 	std::vector<std::vector<int>> subtours = {};          //contem os subtours 
 
-	double lower_bound= INFINITY;             //custo total da solucao do algoritmo hungaro
+	double lower_bound= 0;             //custo total da solucao do algoritmo hungaro
 	int chosen = -1;                       // indice do menor subtour (que será escolhido)
 	bool feasible = 0;                     //indica se a solucao do AP é viável pra o TSP 
  };
@@ -22,17 +22,18 @@ struct Node {     //estrutura para cada nó da árvore
 void ExcludingNodes(vector<int> &nodes, vector<int> &tour_to_exclue){      //funcao auxiliar 
 
 
-	for(int i = 0; i < nodes.size(); i++){
+	for(int i = 0; i < tour_to_exclue.size(); i++){
 
-		for(int j = 0; j < tour_to_exclue.size(); j++){
+		for(int j = 0; j < nodes.size(); j++){
 
-			if(nodes[i] == tour_to_exclue[j]-1){
+			if(nodes[j] == tour_to_exclue[i]-1){
 				
 				//cout << "no excluido " << nodes[i] << endl;
-				nodes.erase(nodes.begin()+i);
+				nodes.erase(nodes.begin()+j);
 				i = 0;
 			}
 		}
+		
 	}
 }
 
@@ -250,13 +251,9 @@ void BnB (Data *data, vector<vector<double>> &cost){
 
 	Node root;    
 	std::list<Node> tree;    
-
-	getSolutionHungarian(root, data->getDimension(), cost);
 	tree.push_back(root);
 
 	double upper_bound = std::numeric_limits<double>::infinity();      //valor upper bound que começa no infinito
-
-
 
 	while (!tree.empty()){
 
@@ -282,8 +279,8 @@ void BnB (Data *data, vector<vector<double>> &cost){
 		}
 		
 		current_node.chosen = chooseSubtour(current_node.subtours);    
-		//PrintInformationNode(current_node); cout << endl;  //printando o node atual
-		//getchar();
+		PrintInformationNode(current_node); cout << endl;  //printando o node atual
+		getchar();
 
 
 		for(int i = 0; i < current_node.subtours[current_node.chosen].size() - 1; i++){ //gerando os nós filhos
