@@ -226,8 +226,9 @@ void getSolutionHungarian(Node &node, int dimension, vector<vector<double>> &cos
 	int mode = HUNGARIAN_MODE_MINIMIZE_COST;
 	hungarian_init(&p, new_cost, dimension, dimension, mode);  
 	double obj_value = hungarian_solve(&p);   
-	//hungarian_print_assignment(&p);            //printa o assignment
-
+	
+	hungarian_print_assignment(&p);            //printa o assignment
+	
 
 
 	node.subtours = GetSubtours(p);       //extrair os subtours da solucao
@@ -275,13 +276,15 @@ void BnB (Data *data, vector<vector<double>> &cost){
 			if(current_node.lower_bound < upper_bound){
 
 				upper_bound = current_node.lower_bound;
+
+				cout << "upper bound: " << upper_bound << endl;
 			}
 		}
 		
 		current_node.chosen = chooseSubtour(current_node.subtours);    
 		PrintInformationNode(current_node); cout << endl;  //printando o node atual
 		getchar();
-
+		
 
 		for(int i = 0; i < current_node.subtours[current_node.chosen].size() - 1; i++){ //gerando os nós filhos
 
@@ -298,7 +301,9 @@ void BnB (Data *data, vector<vector<double>> &cost){
 		}
 		
 		tree.erase(node);      //apagando o nó mãe
+		system("clear");
 	}
+	
 
 	cout << "upper bound: " << upper_bound << endl;
 }
