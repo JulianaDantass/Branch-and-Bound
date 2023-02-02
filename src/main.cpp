@@ -227,7 +227,7 @@ void getSolutionHungarian(Node &node, int dimension, vector<vector<double>> &cos
 	hungarian_init(&p, new_cost, dimension, dimension, mode);  
 	double obj_value = hungarian_solve(&p);   
 	
-	hungarian_print_assignment(&p);            //printa o assignment
+	//hungarian_print_assignment(&p);            //printa o assignment
 	
 
 
@@ -251,7 +251,9 @@ void getSolutionHungarian(Node &node, int dimension, vector<vector<double>> &cos
 void BnB (Data *data, vector<vector<double>> &cost){
 
 	Node root;    
-	std::list<Node> tree;    
+	std::list<Node> tree;   
+	getSolutionHungarian(root, data->getDimension(), cost);   
+	root.chosen = chooseSubtour(root.subtours); 
 	tree.push_back(root);
 
 	double upper_bound = std::numeric_limits<double>::infinity();      //valor upper bound que começa no infinito
@@ -259,8 +261,6 @@ void BnB (Data *data, vector<vector<double>> &cost){
 	while (!tree.empty()){
 
 		auto node = chooseNode(tree);        //escolhe o nó 
-
-		getSolutionHungarian(*node, data->getDimension(), cost);     //aplica o algoritmo hungaro
 	
 		Node current_node = *node;
 
@@ -281,9 +281,9 @@ void BnB (Data *data, vector<vector<double>> &cost){
 			}
 		}
 		
-		current_node.chosen = chooseSubtour(current_node.subtours);    
-		PrintInformationNode(current_node); cout << endl;  //printando o node atual
-		getchar();
+		//current_node.chosen = chooseSubtour(current_node.subtours);    
+		//PrintInformationNode(current_node); cout << endl;  //printando o node atual
+		//getchar();
 		
 
 		for(int i = 0; i < current_node.subtours[current_node.chosen].size() - 1; i++){ //gerando os nós filhos
@@ -297,15 +297,17 @@ void BnB (Data *data, vector<vector<double>> &cost){
 			branch.forbidden_arcs.push_back(new_forbidden);
 
 			getSolutionHungarian(branch, data->getDimension(), cost);
+			branch.chosen = chooseSubtour(branch.subtours);
+
 			tree.push_back(branch);
 		}
 		
 		tree.erase(node);      //apagando o nó mãe
-		system("clear");
 	}
 	
 
 	cout << "upper bound: " << upper_bound << endl;
+	
 }
 
 
