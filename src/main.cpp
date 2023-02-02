@@ -260,9 +260,12 @@ void BnB (Data *data, vector<vector<double>> &cost){
 
 	while (!tree.empty()){
 
-		auto node = chooseNode(tree);        //escolhe o nó 
-	
+		//auto node = chooseNode(tree);        //escolhe o nó 
+		auto node = std::prev(tree.end());      //aponta pro ultimo elemento da lista
+
 		Node current_node = *node;
+		getSolutionHungarian(current_node, data->getDimension(), cost);    //linha q deve ser comentada
+		current_node.chosen = chooseSubtour(current_node.subtours); 
 
 
 		if (current_node.lower_bound > upper_bound){    //se a solucao do AP > UB, essa solução é descartada
@@ -282,7 +285,7 @@ void BnB (Data *data, vector<vector<double>> &cost){
 		}
 		
 		//current_node.chosen = chooseSubtour(current_node.subtours);    
-		//PrintInformationNode(current_node); cout << endl;  //printando o node atual
+		//PrintInformationNodePrintInformationNode(current_node); cout << endl;  //printando o node atual
 		//getchar();
 		
 
@@ -296,13 +299,14 @@ void BnB (Data *data, vector<vector<double>> &cost){
 
 			branch.forbidden_arcs.push_back(new_forbidden);
 
-			getSolutionHungarian(branch, data->getDimension(), cost);
-			branch.chosen = chooseSubtour(branch.subtours);
+			//getSolutionHungarian(branch, data->getDimension(), cost);
+			//branch.chosen = chooseSubtour(branch.subtours);
 
 			tree.push_back(branch);
 		}
 		
 		tree.erase(node);      //apagando o nó mãe
+		//system("clear");
 	}
 	
 
