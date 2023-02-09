@@ -128,37 +128,27 @@ void PrintInformationNode(Node &some_node){         //funcao para printar as inf
 
 }
 
-list<Node>::iterator chooseNode(std::list<Node> &tree){      //seleciona o nó pelo menor LB
-
-	Node node_analysed;
-	double lowerLB;
-	int counter;
-	int times;
-	list<Node>::iterator it_chosen = tree.begin();       //só inicializando o iterator da árvore
+list<Node>::iterator chooseNode(std::list<Node> &tree, int option){      //seleciona o nó pelo menor LB
 
 	
-	lowerLB = (double)INFINITY;
-	counter = times = 0;      //inicializando em zero
+    list<Node>::iterator it_node;
 
-	for (auto it : tree){
+	if(option == 1){                         //profundidade 
 
-		//PrintInformationNode(it);
+		it_node = std::prev(tree.end());    
 
-		if(it.lower_bound < lowerLB){
+	}else if(option == 2){                  //largura
 
-			lowerLB = it.lower_bound;
-			times = counter;
-			//cout << "entered!!!!!!!!!";
-		}
-		counter++;
+		it_node = tree.cbegin();
+
+	}else if(option == 3){
+
 	}
 
-	advance(it_chosen, times);
-        
-	//cout << "lower bound chosen " << lowerLB << endl;
+	
 
 
-	return it_chosen;
+	return it_node;
 }
 
 int chooseSubtour (std::vector<std::vector<int>> &current){
@@ -250,6 +240,7 @@ void getSolutionHungarian(Node &node, int dimension, vector<vector<double>> &cos
 
 void BnB (Data *data, vector<vector<double>> &cost){
 
+	int option_search; 
 	Node root;    
 	std::list<Node> tree;   
 	getSolutionHungarian(root, data->getDimension(), cost);   
@@ -258,10 +249,20 @@ void BnB (Data *data, vector<vector<double>> &cost){
 
 	double upper_bound = std::numeric_limits<double>::infinity();      //valor upper bound que começa no infinito
 
+
+	option_search = 1;         //default 
+
+	cout << endl << "choose the method for the search: " << endl << endl;
+	cout <<         "1  -----                   depth " << endl;      //profundidade
+	cout <<         "2  -----                   width " << endl;      //largura
+	cout <<         "3  -----            lowest bound " << endl;      //best bound
+
+	cout << endl << "the default is the 1 option~~~~~ " << endl;      //best bound
+
+
 	while (!tree.empty()){
 
-		//auto node = chooseNode(tree);        //escolhe o nó 
-		auto node = std::prev(tree.end());      //aponta pro ultimo elemento da lista
+		auto node = chooseNode(tree, option_search);        //escolhe o nó 
 
 		Node current_node = *node;
 		getSolutionHungarian(current_node, data->getDimension(), cost);    //linha q deve ser comentada
@@ -318,7 +319,6 @@ void BnB (Data *data, vector<vector<double>> &cost){
 
 int main(int argc, char** argv) {      
 
-	
 
 	Data *data = new Data(argc, argv[1]);
 	data->readData();
