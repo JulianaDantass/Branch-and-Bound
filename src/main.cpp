@@ -161,7 +161,7 @@ list<Node>::iterator chooseNode(std::list<Node> &tree){      //seleciona o nó p
 	return it_chosen;
 }
 
-int chooseSubtour (std::vector<std::vector<int>> current){
+int chooseSubtour (std::vector<std::vector<int>> &current){
 
 	int possible_choice;
 	int first_smaller;
@@ -280,7 +280,7 @@ void BnB (Data *data, vector<vector<double>> &cost){
 
 				upper_bound = current_node.lower_bound;
 
-				cout << "upper bound: " << upper_bound << endl;
+				//cout << "upper bound: " << upper_bound << endl;
 			}
 		}
 		
