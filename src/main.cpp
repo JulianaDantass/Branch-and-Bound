@@ -3,6 +3,7 @@
 #include <iterator>
 #include <list>
 #include <limits>
+#include <queue>
 #include "data.h"
 #include "hungarian.h"
 
@@ -18,6 +19,10 @@ struct Node {     //estrutura para cada nó da árvore
 	bool feasible = 0;                     //indica se a solucao do AP é viável pra o TSP 
  };
 
+bool operator < (Node a, Node b){
+
+	return a.lower_bound > b.lower_bound;
+}
 
 void ExcludingNodes(vector<int> &nodes, vector<int> &tour_to_exclue){      //funcao auxiliar 
 
@@ -43,6 +48,8 @@ vector<vector<int>> GetSubtours(hungarian_problem_t pointer){            //funca
 	int last_node;
 	vector<int> total_nodes; 
 	vector<vector<int>> total_subtours;
+
+	
 
 	for (int i = 0; i < pointer.num_rows; i++){                          
 		
@@ -133,20 +140,15 @@ list<Node>::iterator chooseNode(std::list<Node> &tree, int option){      //selec
 	
     list<Node>::iterator it_node;
 
-	if(option == 1){                         //profundidade 
+	if(option == 1 || option == 3){                         //profundidade 
 
 		it_node = std::prev(tree.end());    
 
 	}else if(option == 2){                  //largura
 
-		it_node = tree.cbegin();
-
-	}else if(option == 3){
+		it_node = tree.begin();
 
 	}
-
-	
-
 
 	return it_node;
 }
@@ -238,11 +240,12 @@ void getSolutionHungarian(Node &node, int dimension, vector<vector<double>> &cos
 }
 
 
-void BnB (Data *data, vector<vector<double>> &cost){
+void BnB (Data *data, vector<vector<double>> &cost, int option){
 
-	int option_search; 
 	Node root;    
 	std::list<Node> tree;   
+
+
 	getSolutionHungarian(root, data->getDimension(), cost);   
 	root.chosen = chooseSubtour(root.subtours); 
 	tree.push_back(root);
@@ -250,19 +253,9 @@ void BnB (Data *data, vector<vector<double>> &cost){
 	double upper_bound = std::numeric_limits<double>::infinity();      //valor upper bound que começa no infinito
 
 
-	option_search = 1;         //default 
-
-	cout << endl << "choose the method for the search: " << endl << endl;
-	cout <<         "1  -----                   depth " << endl;      //profundidade
-	cout <<         "2  -----                   width " << endl;      //largura
-	cout <<         "3  -----            lowest bound " << endl;      //best bound
-
-	cout << endl << "the default is the 1 option~~~~~ " << endl;      //best bound
-
-
 	while (!tree.empty()){
 
-		auto node = chooseNode(tree, option_search);        //escolhe o nó 
+		auto node = chooseNode(tree, option);        //escolhe o nó 
 
 		Node current_node = *node;
 		getSolutionHungarian(current_node, data->getDimension(), cost);    //linha q deve ser comentada
@@ -300,14 +293,10 @@ void BnB (Data *data, vector<vector<double>> &cost){
 
 			branch.forbidden_arcs.push_back(new_forbidden);
 
-			//getSolutionHungarian(branch, data->getDimension(), cost);
-			//branch.chosen = chooseSubtour(branch.subtours);
-
 			tree.push_back(branch);
 		}
 		
 		tree.erase(node);      //apagando o nó mãe
-		//system("clear");
 	}
 	
 
@@ -316,6 +305,70 @@ void BnB (Data *data, vector<vector<double>> &cost){
 }
 
 
+void BnB_lowestbound (Data *data, vector<vector<double>> &cost, int option){
+
+	priority_queue<Node> tree;
+	Node root;    
+
+
+	getSolutionHungarian(root, data->getDimension(), cost);   
+	root.chosen = chooseSubtour(root.subtours); 
+	tree.push(root);
+
+	double upper_bound = std::numeric_limits<double>::infinity();      //valor upper bound que começa no infinito
+
+
+	while (!tree.empty()){
+
+		Node current_node = tree.top();        //pega o primeiro elemento da sequencia (q possui menor lb)
+		tree.pop();                           //apaga o nó
+
+		//PrintInformationNode(current_node); cout << endl; getchar();
+
+		getSolutionHungarian(current_node, data->getDimension(), cost);    //linha q deve ser comentada
+		current_node.chosen = chooseSubtour(current_node.subtours); 
+
+
+		if (current_node.lower_bound > upper_bound){    //se a solucao do AP > UB, essa solução é descartada
+			
+			tree.pop();
+			continue;
+		}
+
+		if (current_node.feasible){          //se o AP for solução pro TSP
+
+			if(current_node.lower_bound < upper_bound){
+
+				upper_bound = current_node.lower_bound;
+
+				//cout << "upper bound: " << upper_bound << endl;
+			}
+		}
+		
+
+		for(int i = 0; i < current_node.subtours[current_node.chosen].size() - 1; i++){ //gerando os nós filhos
+
+			Node branch;
+			std::pair<int, int> new_forbidden;
+
+			branch.forbidden_arcs = current_node.forbidden_arcs;    //herdando os arcos proibidos do nó mãe 
+			new_forbidden = {current_node.subtours[current_node.chosen][i], current_node.subtours[current_node.chosen][i+1]};
+
+			branch.forbidden_arcs.push_back(new_forbidden);
+
+			
+			getSolutionHungarian(branch, data->getDimension(), cost);
+			branch.chosen = chooseSubtour(branch.subtours);
+			
+
+			tree.push(branch);
+		}
+	}
+	
+
+	cout << "upper bound: " << upper_bound << endl;
+	
+}
 
 int main(int argc, char** argv) {      
 
@@ -335,12 +388,32 @@ int main(int argc, char** argv) {
 			cost[i].push_back( data->getDistance(i,j) );
 		}
 	}
+
+	int option_search = 0;
+	
+	cout << endl << "choose the method for the search (the default is the 1 option)" << endl << endl;
+	cout <<         "1  -----                   depth " << endl;      //profundidade
+	cout <<         "2  -----                   width " << endl;      //largura
+	cout <<         "3  -----            lowest bound " << endl;      //best bound
+
+	cout << endl << "option: ";      //best bound
+
+	cin >> option_search;
+	getchar();           //pegar buffer
+
+	if(option_search < 1 || option_search > 3){
+		option_search = 1;         //default 
+	}
+
+	if(option_search == 3){
+		
+		BnB_lowestbound(data, cost, option_search);            //chamando o algoritmo paa o terceiro caso (bnb por lowesr bound)
+	}else{
+		BnB(data, cost, option_search);                    //chamando o algoritmo Branch and Bound
+	}
 	
 
-	BnB(data, cost);                    //chamando o algoritmo Branch and Bound
-
 	
-
 	//----------- deletando memória ------------	
 	delete data;
 
